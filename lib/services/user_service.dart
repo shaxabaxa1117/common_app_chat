@@ -7,15 +7,14 @@ import '../models/user_model.dart';
 class UserService {
   final CollectionReference userCollection =
       FirebaseFirestore.instance.collection('users');
-  final CollectionReference friendRequests =
-      FirebaseFirestore.instance.collection('friend_requests');
+  final CollectionReference friendRequests = FirebaseFirestore.instance.collection('friend_requests');
 
   // Сохранение пользователя в Firestore
   Future<void> saveUser(UserModel user) async {
     await userCollection.doc(user.id).set(user.toMap());
   }
 
-  // Получение данных пользователя
+  //! Получение данных пользователя
   Future<UserModel?> getUser(String userId) async {
     DocumentSnapshot snapshot = await userCollection.doc(userId).get();
     if (snapshot.exists) {
@@ -25,40 +24,17 @@ class UserService {
   }
 
   // Поиск пользователей
-  Future<List<UserModel>> searchUsers(String query) async {
-    final snapshot = await userCollection
-        .where('username', isEqualTo: query)
-        .get();
+  Future<List<UserModel>> searchUsers(String userName) async {
+    
+    final snapshot =
+        await userCollection.where('username', isEqualTo: userName).get();
 
     return snapshot.docs
         .map((doc) => UserModel.fromMap(doc.data() as Map<String, dynamic>))
         .toList();
   }
-
-  // Отправка заявки в друзья
-  Future<void> sendFriendRequest(String fromUserId, String toUserId) async {
-    await friendRequests.add({
-      'fromUserId': fromUserId,
-      'toUserId': toUserId,
-      'status': 'pending',
-    });
-  }
-
-  // Принятие заявки в друзья
-  Future<void> acceptFriendRequest(
-      String requestId, String fromUserId, String toUserId) async {
-    await friendRequests.doc(requestId).update({'status': 'accepted'});
-
-    await userCollection.doc(fromUserId).update({
-      'friends': FieldValue.arrayUnion([toUserId]),
-    });
-
-    await userCollection.doc(toUserId).update({
-      'friends': FieldValue.arrayUnion([fromUserId]),
-    });
-  }
-
-  // Получение друзей пользователя
+/* ------------------------------------------------------------------------------------*/
+  //! Получение друзей пользователя
   Future<List<UserModel>> getFriends(String userId) async {
     final userDoc = await userCollection.doc(userId).get();
     final user = UserModel.fromMap(userDoc.data() as Map<String, dynamic>);
@@ -70,5 +46,60 @@ class UserService {
     return friendsSnapshots.docs
         .map((doc) => UserModel.fromMap(doc.data() as Map<String, dynamic>))
         .toList();
+  }
+
+  //! Отправка заявки в друзья
+  Future<void> sendFriendRequest(String fromUserId, String toUserId) async {
+
+    await friendRequests.add({
+      'fromUserId': fromUserId,
+      'toUserId': toUserId,
+      'status': 'pending',
+    });
+  }
+
+
+  Future<List<Map<String, dynamic>>> getFriendRequests(String userId) async {
+    final snapshot = await friendRequests
+        .where('toUserId', isEqualTo: userId) //! мы ищем запросы, которые были отправлены этому пользователю.
+        .where('status', isEqualTo: 'pending') //! Только активные запросы
+        .get();
+
+    return snapshot.docs.map((doc) {
+      return {
+        'id': doc.id, //! ID документа запроса
+        'fromUserId': doc['fromUserId'],
+        'toUserId': doc['toUserId'],
+        'status': doc['status'],
+      };
+    }).toList();
+  }
+
+  Future<void> acceptFriendRequest(
+      String requestId, String fromUserId, String toUserId) async {
+    final CollectionReference friendRequests =
+        FirebaseFirestore.instance.collection('friend_requests');
+
+    //! Обновить статус заявки
+    await friendRequests.doc(requestId).update({'status': 'accepted'});
+
+    //! Добавить пользователей друг к другу в друзья
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(fromUserId)
+        .update({
+      'friends': FieldValue.arrayUnion([toUserId]),
+    });
+
+    await FirebaseFirestore.instance.collection('users').doc(toUserId).update({
+      'friends': FieldValue.arrayUnion([fromUserId]),
+    });
+  }
+
+  Future<void> declineFriendRequest(String requestId) async {
+    await FirebaseFirestore.instance
+        .collection('friend_requests')
+        .doc(requestId)
+        .update({'status': 'declined'});
   }
 }

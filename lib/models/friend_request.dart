@@ -2,7 +2,7 @@
 class FriendRequest {
   final String fromUserId;
   final String toUserId;
-  final String status; // pending, accepted, declined
+  final String status; //! pending, accepted, declined
 
   FriendRequest({
     required this.fromUserId,

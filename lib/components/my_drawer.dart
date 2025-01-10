@@ -29,9 +29,14 @@ final AuthService _auth = AuthService();
 
           Expanded(child: Column(
             children: [
-              MyListTile(icon: Icons.group_add, text: 'Add friend', onTap: (){}),
+              MyListTile(icon: Icons.group_add, text: 'Add friend', onTap: (){
+
+                Navigator.pushNamed(context, '/search');
+              }),
               MyListTile(icon: Icons.groups, text: 'Create group', onTap: (){}),
-              MyListTile(icon: Icons.message, text: 'Friend invitations', onTap: (){}),
+              MyListTile(icon: Icons.message, text: 'Friend invitations', onTap: (){
+                Navigator.pushNamed(context, '/request');
+              }),
               MyListTile(icon: Icons.settings, text: 'Settings', onTap: (){}),
               MyListTile(icon: Icons.logout, text: 'Log Out', onTap: (){
                 _auth.signOut();

@@ -9,7 +9,9 @@ class AuthService {
 
 
 
-
+  Future<User?> getCurrentUser() async {
+    return _firebaseAuth.currentUser; // Возвращает текущего пользователя
+  }
 
   //! Registration
   Future<void> registerUser({
