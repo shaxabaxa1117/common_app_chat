@@ -33,6 +33,8 @@ class AuthService {
       username: username,
       email: email,
       phoneNumber: phoneNumber,
+      friends: [],
+      
     );
 
     //! Saving the user in firestore
