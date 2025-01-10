@@ -18,6 +18,7 @@ class MyTextfield extends StatelessWidget {
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: TextStyle(
+          //backgroundColor: const Color.fromARGB(235, 27, 197, 32),
             color: Theme.of(context).colorScheme.primary,
           ),
           enabledBorder: OutlineInputBorder(

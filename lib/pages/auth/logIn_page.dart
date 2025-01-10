@@ -3,6 +3,7 @@
 
 import 'package:common_app_chat/components/my_button.dart';
 import 'package:common_app_chat/components/my_textfield.dart';
+import 'package:common_app_chat/services/auth_service.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatelessWidget {
@@ -10,7 +11,25 @@ class LoginPage extends StatelessWidget {
   final TextEditingController _passwordController = TextEditingController();
   void Function()? onTap;
 
-  // void login({required BuildContext context}) async {
+  void login({required BuildContext context}) async {
+    final AuthService auth = AuthService();
+
+    try {
+      await auth.signInWithEmailPassword(
+          _emailController.text, _passwordController.text);
+          Navigator.pushReplacementNamed(context, '/home');
+    } catch (e) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(e.toString()),
+          );
+        },
+      );
+    }
+  }
+
 
 
   LoginPage({super.key, required this.onTap});
@@ -56,9 +75,9 @@ class LoginPage extends StatelessWidget {
           const SizedBox(
             height: 20,
           ),
-         const  MyButton(
+         MyButton(
             text: 'Login',
-            // onTap: () => login(context: context),
+            onTap: () => login(context: context),
           ),
           const SizedBox(
             height: 20,

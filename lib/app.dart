@@ -1,4 +1,6 @@
+import 'package:common_app_chat/pages/auth/auth_gate.dart';
 import 'package:common_app_chat/pages/auth/logIn_page.dart';
+import 'package:common_app_chat/pages/auth/register_page.dart';
 import 'package:flutter/material.dart';
 
 class MainAppWidget extends StatelessWidget {
@@ -6,6 +8,6 @@ class MainAppWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LoginPage(onTap: null);
+    return const AuthGate();
   }
 }
