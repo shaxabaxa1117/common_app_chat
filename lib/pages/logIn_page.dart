@@ -10,23 +10,6 @@ class LoginPage extends StatelessWidget {
   final TextEditingController _passwordController = TextEditingController();
   void Function()? onTap;
 
-  // void login({required BuildContext context}) async {
-  //   final AuthService auth = AuthService();
-
-  //   try {
-  //     await auth.signInWithEmailPassword(
-  //         _emailController.text, _passwordController.text);
-  //   } catch (e) {
-  //     showDialog(
-  //       context: context,
-  //       builder: (context) {
-  //         return AlertDialog(
-  //           title: Text(e.toString()),
-  //         );
-  //       },
-  //     );
-  //   }
-  // }
 
   LoginPage({super.key, required this.onTap});
 
