@@ -36,21 +36,36 @@ class UserService {
 
 /* ------------------------------------------------------------------------------------*/
   //! Получение друзей пользователя
-  Future<List<UserModel>> getFriends(String userId) async {
-    final userDoc = await userCollection.doc(userId).get();
-    final user = UserModel.fromMap(userDoc.data() as Map<String, dynamic>);
+//! Получение друзей пользователя через Stream
+  Stream<List<Map<String, dynamic>>> getFriendsStream(String userId) {
+    return userCollection
+        .doc(userId)
+        .snapshots()
+        .asyncMap((userSnapshot) async {
+      if (!userSnapshot.exists || userSnapshot.data() == null) {
+        return [];
+      }
 
-    final friendsSnapshots = await userCollection
-        .where(FieldPath.documentId, whereIn: user.friends)
-        .get();
+      final user =
+          UserModel.fromMap(userSnapshot.data() as Map<String, dynamic>);
+      if (user.friends == null || user.friends.isEmpty) {
+        return [];
+      }
 
-    return friendsSnapshots.docs
-        .map((doc) => UserModel.fromMap(doc.data() as Map<String, dynamic>))
-        .toList();
+      final friendsSnapshots = await userCollection
+          .where(FieldPath.documentId, whereIn: user.friends)
+          .get();
+
+      return friendsSnapshots.docs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        return {
+          'id': doc.id,
+          'username': data['username'],
+          'email': data['email'],
+        };
+      }).toList();
+    });
   }
-
-
-  
 
   //! Отправка заявки в друзья
   Future<void> sendFriendRequest(String fromUserId, String toUserId) async {

@@ -55,14 +55,20 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   void _sendFriendRequest(String toUserId) async {
-
     final currentUser = await _authService.getCurrentUser();
     final userId = currentUser!.uid;
+
     try {
       await _userService.sendFriendRequest(userId, toUserId);
+
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Запрос отправлен!')),
+        const SnackBar(content: Text('Запрос отправлен!')),
       );
+
+      // Удаляем пользователя из списка
+      setState(() {
+        _searchResults.removeWhere((user) => user.id == toUserId);
+      });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Ошибка отправки запроса: $e')),
@@ -115,7 +121,7 @@ class _SearchPageState extends State<SearchPage> {
                     subtitle: Text(user.email),
                     trailing: IconButton(
                       icon: const Icon(Icons.person_add),
-                      onPressed: () => _sendFriendRequest(user.id), //! отправления request
+                      onPressed: () => _sendFriendRequest(user.id),
                     ),
                   );
                 },

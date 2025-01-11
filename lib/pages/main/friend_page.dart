@@ -4,6 +4,12 @@ import 'package:common_app_chat/services/chat_service.dart';
 import 'package:common_app_chat/services/user_service.dart';
 import 'package:flutter/material.dart';
 
+import 'package:common_app_chat/pages/chat/chat_papge.dart';
+import 'package:common_app_chat/services/auth_service.dart';
+import 'package:common_app_chat/services/user_service.dart';
+import 'package:common_app_chat/services/chat_service.dart';
+import 'package:flutter/material.dart';
+
 class FriendsPage extends StatefulWidget {
   const FriendsPage({Key? key}) : super(key: key);
 
@@ -16,30 +22,21 @@ class _FriendsPageState extends State<FriendsPage> {
   final AuthService _authService = AuthService();
   final ChatService _chatService = ChatService();
 
-  List<Map<String, dynamic>> _friends = [];
-  bool _isLoading = true;
+  Stream<List<Map<String, dynamic>>>? _friendsStream;
 
   @override
   void initState() {
     super.initState();
-    _loadFriends();
+    _setupFriendsStream();
   }
 
-  void _loadFriends() async {
+  void _setupFriendsStream() async {
     final currentUser = await _authService.getCurrentUser();
-    if (currentUser == null) return;
-
-    final friends = await _userService.getFriends(currentUser.uid);
-    setState(() {
-      _friends = friends
-          .map((friend) => {
-                'id': friend.id,
-                'username': friend.username,
-                'email': friend.email,
-              })
-          .toList();
-      _isLoading = false;
-    });
+    if (currentUser != null) {
+      setState(() {
+        _friendsStream = _userService.getFriendsStream(currentUser.uid);
+      });
+    }
   }
 
   void _startChat(String friendId) async {
@@ -58,17 +55,31 @@ class _FriendsPageState extends State<FriendsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Друзья'),
-      ),
-      body: _isLoading
+      body: _friendsStream == null
           ? const Center(child: CircularProgressIndicator())
-          : _friends.isEmpty
-              ? const Center(child: Text('У вас пока нет друзей'))
-              : ListView.builder(
-                  itemCount: _friends.length,
+          : StreamBuilder<List<Map<String, dynamic>>>(
+              stream: _friendsStream,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (snapshot.hasError) {
+                  return Center(
+                    child: Text('Ошибка загрузки данных: ${snapshot.error}'),
+                  );
+                }
+
+                final friends = snapshot.data ?? [];
+
+                if (friends.isEmpty) {
+                  return const Center(child: Text('У вас пока нет друзей'));
+                }
+
+                return ListView.builder(
+                  itemCount: friends.length,
                   itemBuilder: (context, index) {
-                    final friend = _friends[index];
+                    final friend = friends[index];
                     return ListTile(
                       title: Text(friend['username']),
                       subtitle: Text(friend['email']),
@@ -78,7 +89,9 @@ class _FriendsPageState extends State<FriendsPage> {
                       ),
                     );
                   },
-                ),
+                );
+              },
+            ),
     );
   }
 }

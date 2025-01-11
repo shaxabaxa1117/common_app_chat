@@ -1,4 +1,5 @@
 import 'package:common_app_chat/components/my_drawer.dart';
+import 'package:common_app_chat/pages/main/friend_page.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatelessWidget {
@@ -22,6 +23,7 @@ class HomePage extends StatelessWidget {
 
       ),
       drawer: MyDrawer(),
+      body: FriendsPage(),
     );
   }
 }

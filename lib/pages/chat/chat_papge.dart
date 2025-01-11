@@ -20,17 +20,10 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void initState() {
     super.initState();
-    _initializeCurrentUser();
+
   }
 
-  Future<void> _initializeCurrentUser() async {
-    final currentUser = await _authService.getCurrentUser();
-    if (currentUser != null) {
-      setState(() {
-        _currentUserId = currentUser.uid;
-      });
-    }
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +43,7 @@ class _ChatPageState extends State<ChatPage> {
                 if (!snapshot.hasData || snapshot.data!.isEmpty) {
                   return const Center(child: Text('Сообщений пока нет'));
                 }
-                final messages = snapshot.data!;
+                final messages = snapshot.data!; //! даем значение 
                 return ListView.builder(
                   reverse:
                       true, 
@@ -77,7 +70,7 @@ class _ChatPageState extends State<ChatPage> {
                           children: [
                             if (!isCurrentUser)
                               Text(
-                                message['senderName'] ?? 'Unknown',
+                                 message['senderName'] ?? ' unknown',
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   color: Colors.black,
@@ -122,8 +115,7 @@ class _ChatPageState extends State<ChatPage> {
                       await _chatService.sendMessage(
                         widget.chatId,
                         currentUser.uid,
-                        currentUser.displayName ??
-                            'Anonymous', 
+
                         _messageController.text,
                       );
                       _messageController.clear();
