@@ -13,7 +13,11 @@ class HomePage extends StatelessWidget {
         title: Text('CommonChat'),
         centerTitle: true,
         actions: [
-          IconButton(onPressed: (){}, icon: const Icon(Icons.people)),
+          IconButton(onPressed: (){
+
+
+            Navigator.pushNamed(context, '/friends');
+          }, icon: const Icon(Icons.people)),
         ],
 
       ),

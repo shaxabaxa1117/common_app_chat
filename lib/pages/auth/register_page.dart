@@ -48,7 +48,7 @@ class RegisterPage extends StatelessWidget {
                         : null,
                   );
 
-                  // Навигация после успешной регистрации
+
                   Navigator.pushReplacementNamed(context, '/home');
                 } catch (e) {
                   print(e);

@@ -2,7 +2,6 @@ import 'package:common_app_chat/services/auth_service.dart';
 import 'package:common_app_chat/services/user_service.dart';
 import 'package:flutter/material.dart';
 
-
 class FriendRequestsPage extends StatefulWidget {
   const FriendRequestsPage({Key? key}) : super(key: key);
 
@@ -23,9 +22,9 @@ class _FriendRequestsPageState extends State<FriendRequestsPage> {
     _loadFriendRequests();
   }
 
-  void _loadFriendRequests() async { //!
+  void _loadFriendRequests() async {
+    //!
     final currentUser = await _authService.getCurrentUser();
-
 
     final requests = await _userService.getFriendRequests(currentUser!.uid);
     setState(() {
@@ -58,38 +57,39 @@ class _FriendRequestsPageState extends State<FriendRequestsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Запросы в друзья'),
-      ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _requests.isEmpty
-              ? const Center(child: Text('Нет входящих запросов'))
-              : ListView.builder(
-                  itemCount: _requests.length,
-                  itemBuilder: (context, index) {
-                    final request = _requests[index];
-                    return ListTile(
-                      title: Text('Запрос от: ${request['fromUserId']}'),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.check, color: Colors.green),
-                            onPressed: () => _acceptRequest(
-                              request['id'],
-                              request['fromUserId'],
+        appBar: AppBar(
+          title: const Text('Запросы в друзья'),
+        ),
+        body: _isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : _requests.isEmpty
+                ? const Center(child: Text('Нет входящих запросов'))
+                : ListView.builder(
+                    itemCount: _requests.length,
+                    itemBuilder: (context, index) {
+                      final request = _requests[index];
+                      return ListTile(
+                        title: Text(
+                            'Запрос от: ${request['fromUsername']}'), // Используем имя пользователя
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon:
+                                  const Icon(Icons.check, color: Colors.green),
+                              onPressed: () => _acceptRequest(
+                                request['id'],
+                                request['fromUserId'],
+                              ),
                             ),
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.close, color: Colors.red),
-                            onPressed: () => _declineRequest(request['id']),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-    );
+                            IconButton(
+                              icon: const Icon(Icons.close, color: Colors.red),
+                              onPressed: () => _declineRequest(request['id']),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ));
   }
 }

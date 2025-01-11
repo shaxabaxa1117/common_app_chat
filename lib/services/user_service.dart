@@ -7,9 +7,10 @@ import '../models/user_model.dart';
 class UserService {
   final CollectionReference userCollection =
       FirebaseFirestore.instance.collection('users');
-  final CollectionReference friendRequests = FirebaseFirestore.instance.collection('friend_requests');
+  final CollectionReference friendRequests =
+      FirebaseFirestore.instance.collection('friend_requests');
 
-  // Сохранение пользователя в Firestore
+  //! Сохранение пользователя в Firestore
   Future<void> saveUser(UserModel user) async {
     await userCollection.doc(user.id).set(user.toMap());
   }
@@ -23,9 +24,8 @@ class UserService {
     return null;
   }
 
-  // Поиск пользователей
+  //! Поиск пользователей
   Future<List<UserModel>> searchUsers(String userName) async {
-    
     final snapshot =
         await userCollection.where('username', isEqualTo: userName).get();
 
@@ -33,6 +33,7 @@ class UserService {
         .map((doc) => UserModel.fromMap(doc.data() as Map<String, dynamic>))
         .toList();
   }
+
 /* ------------------------------------------------------------------------------------*/
   //! Получение друзей пользователя
   Future<List<UserModel>> getFriends(String userId) async {
@@ -48,9 +49,11 @@ class UserService {
         .toList();
   }
 
+
+  
+
   //! Отправка заявки в друзья
   Future<void> sendFriendRequest(String fromUserId, String toUserId) async {
-
     await friendRequests.add({
       'fromUserId': fromUserId,
       'toUserId': toUserId,
@@ -58,21 +61,33 @@ class UserService {
     });
   }
 
-
+//! Работа с запросами на дружбу
   Future<List<Map<String, dynamic>>> getFriendRequests(String userId) async {
     final snapshot = await friendRequests
-        .where('toUserId', isEqualTo: userId) //! мы ищем запросы, которые были отправлены этому пользователю.
+        .where('toUserId',
+            isEqualTo:
+                userId) //! Ищем запросы, адресованные текущему пользователю
         .where('status', isEqualTo: 'pending') //! Только активные запросы
         .get();
 
-    return snapshot.docs.map((doc) {
-      return {
-        'id': doc.id, //! ID документа запроса
-        'fromUserId': doc['fromUserId'],
+    List<Map<String, dynamic>> requests = [];
+
+    for (var doc in snapshot.docs) {
+      //! Получаем данные отправителя
+      final fromUserId = doc['fromUserId'];
+      final userSnapshot = await userCollection.doc(fromUserId).get();
+      final userData = userSnapshot.data() as Map<String, dynamic>?;
+
+      requests.add({
+        'id': doc.id,
+        'fromUserId': fromUserId,
+        'fromUsername': userData?['username'] ?? 'Unknown',
         'toUserId': doc['toUserId'],
         'status': doc['status'],
-      };
-    }).toList();
+      });
+    }
+
+    return requests;
   }
 
   Future<void> acceptFriendRequest(
