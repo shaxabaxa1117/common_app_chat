@@ -81,12 +81,10 @@ class _FriendsPageState extends State<FriendsPage> {
                   itemBuilder: (context, index) {
                     final friend = friends[index];
                     return ListTile(
+                      onTap: () => _startChat(friend['id']),
                       title: Text(friend['username']),
                       subtitle: Text(friend['email']),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.chat),
-                        onPressed: () => _startChat(friend['id']),
-                      ),
+
                     );
                   },
                 );

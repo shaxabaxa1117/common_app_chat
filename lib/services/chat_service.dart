@@ -1,4 +1,3 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ChatService {
@@ -29,52 +28,49 @@ class ChatService {
   }
 
   /// Получает поток сообщений для чата
-Stream<List<Map<String, dynamic>>> getChatMessages(String chatId) {
-  return _firestore
-      .collection('chats')
-      .doc(chatId)
-      .collection('messages')
-      .orderBy('timestamp', descending: true)
-      .snapshots()
-      .map((snapshot) => snapshot.docs.map((doc) {
-            final data = doc.data();
-            return {
-              'senderId': data['senderId'],
-              'senderName': data['senderName'], // Имя отправителя
-              'content': data['content'],
-              'timestamp': data['timestamp'],
-            };
-          }).toList());
-}
+  Stream<List<Map<String, dynamic>>> getChatMessages(String chatId) {
+    return _firestore
+        .collection('chats')
+        .doc(chatId) //! получем message конкретно этого чата 
+        .collection('messages')
+        .orderBy('timestamp', descending: true)
+        .snapshots()
+        .map((snapshot) => snapshot.docs.map((doc) {
+              final data = doc.data();
+              return {
+                'senderId': data['senderId'],
+                'senderName': data['senderName'], // Имя отправителя
+                'content': data['content'],
+                'timestamp': data['timestamp'],
+              };
+            }).toList());
+  }
 
+  //! Отправляет сообщение в чат
+  Future<void> sendMessage(
+    String chatId,
+    String senderId,
+    String content,
+  ) async {
+    final senderDoc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(senderId)
+        .get();
 
-  /// Отправляет сообщение в чат
-Future<void> sendMessage(
-  String chatId,
-  String senderId,
-  String content,
-) async {
-  final userDoc = await FirebaseFirestore.instance
-      .collection('users')
-      .doc(senderId)
-      .get();
+    final senderName = senderDoc.data()?['username'] ?? 'Unknown';
 
-  final senderName = userDoc.data()?['username'] ?? 'Unknown';
+    final message =  //! создаем message
+    {
+      'senderId': senderId,
+      'senderName': senderName, 
+      'content': content,
+      'timestamp': FieldValue.serverTimestamp(),
+    };
 
-  final message = {
-    'senderId': senderId,
-    'senderName': senderName, // Добавляем имя отправителя
-    'content': content,
-    'timestamp': FieldValue.serverTimestamp(),
-  };
-
-  await FirebaseFirestore.instance
-      .collection('chats')
-      .doc(chatId)
-      .collection('messages')
-      .add(message);
-}
-
-
-
+    await FirebaseFirestore.instance
+        .collection('chats')
+        .doc(chatId)
+        .collection('messages')
+        .add(message);
+  }
 }

@@ -20,10 +20,17 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void initState() {
     super.initState();
-
+    _initializeCurrentUser();
   }
 
-
+  Future<void> _initializeCurrentUser() async {
+    final currentUser = await _authService.getCurrentUser();
+    if (currentUser != null) {
+      setState(() {
+        _currentUserId = currentUser.uid;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +50,7 @@ class _ChatPageState extends State<ChatPage> {
                 if (!snapshot.hasData || snapshot.data!.isEmpty) {
                   return const Center(child: Text('Сообщений пока нет'));
                 }
-                final messages = snapshot.data!; //! даем значение 
+                final messages = snapshot.data!;
                 return ListView.builder(
                   reverse:
                       true, 
