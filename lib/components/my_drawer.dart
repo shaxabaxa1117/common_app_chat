@@ -24,12 +24,7 @@ class MyDrawer extends StatelessWidget {
           Expanded(
               child: Column(
             children: [
-              MyListTile(
-                  icon: Icons.group_add,
-                  text: 'Add friend',
-                  onTap: () {
-                    Navigator.pushNamed(context, '/search');
-                  }),
+
               MyListTile(
                   icon: Icons.groups, text: 'Create group', onTap: () {}),
               MyListTile(

@@ -18,7 +18,7 @@ class ChatService {
       }
     }
 
-    // Создаем новый чат
+    //! Создаем новый чат
     final chatDoc = await _firestore.collection('chats').add({
       'participants': [currentUserId, friendId],
       'createdAt': FieldValue.serverTimestamp(),
@@ -27,24 +27,26 @@ class ChatService {
     return chatDoc.id;
   }
 
-  /// Получает поток сообщений для чата
-  Stream<List<Map<String, dynamic>>> getChatMessages(String chatId) {
-    return _firestore
-        .collection('chats')
-        .doc(chatId) //! получем message конкретно этого чата 
-        .collection('messages')
-        .orderBy('timestamp', descending: true)
-        .snapshots()
-        .map((snapshot) => snapshot.docs.map((doc) {
-              final data = doc.data();
-              return {
-                'senderId': data['senderId'],
-                'senderName': data['senderName'], //! Имя отправителя
-                'content': data['content'],
-                'timestamp': data['timestamp'],
-              };
-            }).toList());
-  }
+  //! Получает поток сообщений для чата
+Stream<List<Map<String, dynamic>>> getChatMessages(String chatId) {
+  return _firestore
+      .collection('chats')
+      .doc(chatId)
+      .collection('messages')
+      .orderBy('timestamp', descending: true)
+      .snapshots()
+      .map((snapshot) => snapshot.docs.map((doc) {
+            final data = doc.data();
+            return {
+              'messageId': doc.id, // Добавлено для удаления сообщения
+              'senderId': data['senderId'],
+              'senderName': data['senderName'],
+              'content': data['content'],
+              'timestamp': data['timestamp'],
+            };
+          }).toList());
+}
+
 
   //! Отправляет сообщение в чат
   Future<void> sendMessage(

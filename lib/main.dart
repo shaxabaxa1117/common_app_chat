@@ -6,6 +6,7 @@ import 'package:common_app_chat/pages/main/friend_requests_page.dart';
 import 'package:common_app_chat/pages/main/home_page.dart';
 import 'package:common_app_chat/pages/main/search_page.dart';
 import 'package:common_app_chat/providers/auth_provider.dart';
+import 'package:common_app_chat/providers/chat_prvider.dart';
 import 'package:common_app_chat/providers/friend_requests_provider.dart';
 import 'package:common_app_chat/providers/friends_provider.dart';
 import 'package:common_app_chat/providers/search_provider.dart';
@@ -24,6 +25,7 @@ void main() async {
         ChangeNotifierProvider(create: (context) => FriendRequestsProvider()),
         ChangeNotifierProvider(create: (context) => FriendsProvider()),
         ChangeNotifierProvider(create: (context) => SearchProvider()),
+        ChangeNotifierProvider(create: (context) => ChatProvider()),
       ],
       child: const MyApp(),
     ),

@@ -17,8 +17,8 @@ class HomePage extends StatelessWidget {
           IconButton(onPressed: (){
 
 
-            Navigator.pushNamed(context, '/friends');
-          }, icon: const Icon(Icons.people)),
+            Navigator.pushNamed(context, '/search');
+          }, icon: const Icon(Icons.group_add)),
         ],
 
       ),

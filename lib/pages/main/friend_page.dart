@@ -23,9 +23,7 @@ class _FriendsPageState extends State<FriendsPage> {
     final friendsProvider = Provider.of<FriendsProvider>(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Друзья'),
-      ),
+
       body: friendsProvider.friendsStream == null
           ? const Center(child: CircularProgressIndicator())
           : StreamBuilder<List<Map<String, dynamic>>>(
