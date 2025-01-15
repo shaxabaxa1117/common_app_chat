@@ -1,64 +1,35 @@
-import 'package:common_app_chat/pages/chat/chat_papge.dart';
-import 'package:common_app_chat/services/auth_service.dart';
-import 'package:common_app_chat/services/chat_service.dart';
-import 'package:common_app_chat/services/user_service.dart';
 import 'package:flutter/material.dart';
-
-import 'package:common_app_chat/pages/chat/chat_papge.dart';
-import 'package:common_app_chat/services/auth_service.dart';
-import 'package:common_app_chat/services/user_service.dart';
-import 'package:common_app_chat/services/chat_service.dart';
-import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:common_app_chat/providers/friends_provider.dart';
 
 class FriendsPage extends StatefulWidget {
   const FriendsPage({Key? key}) : super(key: key);
 
   @override
-  _FriendsPageState createState() => _FriendsPageState();
+  State<FriendsPage> createState() => _FriendsPageState();
 }
 
 class _FriendsPageState extends State<FriendsPage> {
-  final UserService _userService = UserService();
-  final AuthService _authService = AuthService();
-  final ChatService _chatService = ChatService();
-
-  Stream<List<Map<String, dynamic>>>? _friendsStream;
-
   @override
   void initState() {
     super.initState();
-    _setupFriendsStream();
-  }
-
-  void _setupFriendsStream() async {
-    final currentUser = await _authService.getCurrentUser();
-    if (currentUser != null) {
-      setState(() {
-        _friendsStream = _userService.getFriendsStream(currentUser.uid);
-      });
-    }
-  }
-
-  void _startChat(String friendId) async {
-    final currentUser = await _authService.getCurrentUser();
-    if (currentUser != null) {
-      final chatId = await _chatService.startChat(currentUser.uid, friendId);
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ChatPage(chatId: chatId),
-        ),
-      );
-    }
+    final friendsProvider =
+        Provider.of<FriendsProvider>(context, listen: false);
+    friendsProvider.loadFriends();
   }
 
   @override
   Widget build(BuildContext context) {
+    final friendsProvider = Provider.of<FriendsProvider>(context);
+
     return Scaffold(
-      body: _friendsStream == null
+      appBar: AppBar(
+        title: const Text('Друзья'),
+      ),
+      body: friendsProvider.friendsStream == null
           ? const Center(child: CircularProgressIndicator())
           : StreamBuilder<List<Map<String, dynamic>>>(
-              stream: _friendsStream,
+              stream: friendsProvider.friendsStream,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
@@ -81,10 +52,15 @@ class _FriendsPageState extends State<FriendsPage> {
                   itemBuilder: (context, index) {
                     final friend = friends[index];
                     return ListTile(
-                      onTap: () => _startChat(friend['id']),
+                      onTap: () =>
+                          friendsProvider.startChat(context, friend['id']),
                       title: Text(friend['username']),
                       subtitle: Text(friend['email']),
-
+                      trailing: IconButton(
+                        icon: const Icon(Icons.delete, color: Colors.red),
+                        onPressed: () =>
+                            friendsProvider.removeFriend(friend['id']),
+                      ),
                     );
                   },
                 );

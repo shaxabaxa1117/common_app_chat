@@ -1,5 +1,6 @@
-import 'package:common_app_chat/services/auth_service.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:common_app_chat/providers/auth_provider.dart';
 
 class RegisterPage extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
@@ -7,79 +8,79 @@ class RegisterPage extends StatelessWidget {
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
   void Function()? onTap;
-  final AuthService _authService = AuthService();
+
   RegisterPage({super.key, required this.onTap});
+
   @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context);
+
     return Scaffold(
-      appBar: AppBar(title: Text('Регистрация')),
+      appBar: AppBar(title: const Text('Регистрация')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             TextField(
               controller: usernameController,
-              decoration: InputDecoration(labelText: 'Имя/Никнейм'),
+              decoration: const InputDecoration(labelText: 'Имя/Никнейм'),
             ),
             TextField(
               controller: emailController,
-              decoration: InputDecoration(labelText: 'Gmail'),
+              decoration: const InputDecoration(labelText: 'Gmail'),
             ),
             TextField(
               controller: passwordController,
-              decoration: InputDecoration(labelText: 'Пароль'),
+              decoration: const InputDecoration(labelText: 'Пароль'),
               obscureText: true,
             ),
             TextField(
               controller: phoneController,
-              decoration:
-                  InputDecoration(labelText: 'Номер телефона (опционально)'),
+              decoration: const InputDecoration(labelText: 'Номер телефона'),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
+                // Сохраняем текущий контекст
+
+
                 try {
-                  await _authService.registerUser(
-                    email: emailController.text,
-                    password: passwordController.text,
-                    username: usernameController.text,
+                  await authProvider.register(
+                    emailController.text,
+                    passwordController.text,
+                    usernameController.text,
                     phoneNumber: phoneController.text.isNotEmpty
                         ? phoneController.text
                         : null,
                   );
 
-
-                  Navigator.pushReplacementNamed(context, '/home');
+                  // Навигация в случае успеха
+                  if (context.mounted) {
+                    Navigator.pushReplacementNamed(context, '/home');
+                  }
                 } catch (e) {
-                  print(e);
+                  // Показываем ошибку в сохранённом контексте
+                  if (context.mounted) {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: const Text('Ошибка'),
+                        content: Text(e.toString()),
+                      ),
+                    );
+                  }
                 }
               },
-              child: Text('Зарегистрироваться'),
+              child: const Text('Зарегистрироваться'),
             ),
-            const SizedBox(
-              height: 20,
+            const SizedBox(height: 20),
+            GestureDetector(
+              onTap: onTap,
+              child: const Text(
+                'Войти',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Есть аккаунт?',
-                  style:
-                      TextStyle(color: Theme.of(context).colorScheme.primary),
-                ),
-                const SizedBox(
-                  width: 5,
-                ),
-                GestureDetector(
-                    onTap: onTap,
-                    child: Text(
-                      'Войти',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.primary),
-                    ))
-              ],
-            )
           ],
         ),
       ),

@@ -126,13 +126,22 @@ class UserService {
     });
   }
 
-
-
-
   Future<void> declineFriendRequest(String requestId) async {
     await FirebaseFirestore.instance
         .collection('friend_requests')
         .doc(requestId)
         .update({'status': 'declined'});
+  }
+
+  Future<void> removeFriend(String userId, String friendId) async {
+    //! Удаляем друга из списка пользователя
+    await FirebaseFirestore.instance.collection('users').doc(userId).update({
+      'friends': FieldValue.arrayRemove([friendId]),
+    });
+
+    //! Удаляем пользователя из списка друга
+    await FirebaseFirestore.instance.collection('users').doc(friendId).update({
+      'friends': FieldValue.arrayRemove([userId]),
+    });
   }
 }

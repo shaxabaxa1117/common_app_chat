@@ -25,20 +25,20 @@ Future<void> registerUser({
     throw Exception('Пароль должен содержать минимум 6 символов');
   }
 
-  // Создание пользователя в Firebase Authentication
+  //! Создание пользователя в Firebase Authentication
   UserCredential result = await _firebaseAuth.createUserWithEmailAndPassword(
     email: email,
     password: password,
   );
 
-  // UID
+  //! UID
   String userId = result.user!.uid;
 
-  // Обновляем displayName
+  //! Обновляем displayName
   await result.user!.updateDisplayName(username);
   await result.user!.reload(); // Обновляем данные пользователя локально
 
-  // Сохраняем пользователя в Firestore
+  //! Сохраняем пользователя в Firestore
   UserModel user = UserModel(
     id: userId,
     username: username,

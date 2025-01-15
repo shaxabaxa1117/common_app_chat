@@ -39,7 +39,7 @@ class ChatService {
               final data = doc.data();
               return {
                 'senderId': data['senderId'],
-                'senderName': data['senderName'], // Имя отправителя
+                'senderName': data['senderName'], //! Имя отправителя
                 'content': data['content'],
                 'timestamp': data['timestamp'],
               };
