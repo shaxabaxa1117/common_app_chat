@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:common_app_chat/providers/friend_requests_provider.dart';
 
 class FriendRequestsPage extends StatefulWidget {
-  const FriendRequestsPage({Key? key}) : super(key: key);
+  const FriendRequestsPage({super.key});
 
   @override
   State<FriendRequestsPage> createState() => _FriendRequestsPageState();

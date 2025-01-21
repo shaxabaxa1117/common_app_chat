@@ -26,8 +26,6 @@ class MyDrawer extends StatelessWidget {
             children: [
 
               MyListTile(
-                  icon: Icons.groups, text: 'Create group', onTap: () {}),
-              MyListTile(
                   icon: Icons.message,
                   text: 'Friend invitations',
                   onTap: () {

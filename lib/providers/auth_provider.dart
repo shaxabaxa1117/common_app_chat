@@ -49,6 +49,7 @@ class AuthProvider extends ChangeNotifier {
     _currentUser = null;
     notifyListeners();
   }
+  
 
   Future<void> initialize() async {
     _currentUser = await _authService.getCurrentUser();

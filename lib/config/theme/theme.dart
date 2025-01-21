@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
 
 final lightTheme = ThemeData(
+  
   brightness: Brightness.light,
   primaryColor: Color(0xFFB0E3E6),
   scaffoldBackgroundColor: Colors.white,
@@ -20,6 +21,7 @@ final lightTheme = ThemeData(
 
   ),
   colorScheme:const ColorScheme.light(
+    tertiary: Colors.grey,
     primary: Color(0xFFB0E3E6), // Основной цвет
     secondary: Color(0xFF99FF99), // Акцентный цвет
   ),

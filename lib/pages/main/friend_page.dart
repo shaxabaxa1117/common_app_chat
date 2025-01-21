@@ -49,15 +49,25 @@ class _FriendsPageState extends State<FriendsPage> {
                   itemCount: friends.length,
                   itemBuilder: (context, index) {
                     final friend = friends[index];
-                    return ListTile(
-                      onTap: () =>
-                          friendsProvider.startChat(context, friend['id']),
-                      title: Text(friend['username']),
-                      subtitle: Text(friend['email']),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.delete, color: Colors.red),
-                        onPressed: () =>
-                            friendsProvider.removeFriend(friend['id']),
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(15),
+                        child: Container(
+                          color: Theme.of(context).colorScheme.primary,
+                          child: ListTile(
+                            
+                            onTap: () =>
+                                friendsProvider.startChat(context, friend['id']),
+                            title: Text(friend['username']),
+                            subtitle: Text(friend['email']),
+                            trailing: IconButton(
+                              icon:  Icon(Icons.delete, color: Theme.of(context).colorScheme.tertiary),
+                              onPressed: () =>
+                                  friendsProvider.removeFriend(friend['id']),
+                            ),
+                          ),
+                        ),
                       ),
                     );
                   },
