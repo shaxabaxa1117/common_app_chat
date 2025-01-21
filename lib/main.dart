@@ -1,6 +1,6 @@
 import 'package:common_app_chat/app.dart';
 import 'package:common_app_chat/pages/auth/auth_gate.dart';
-import 'package:common_app_chat/config/theme/theme.dart';
+import 'package:common_app_chat/config/theme/theme.dart';import 'package:common_app_chat/pages/auth/logIn_page.dart';
 import 'package:common_app_chat/pages/main/friend_page.dart';
 import 'package:common_app_chat/pages/main/friend_requests_page.dart';
 import 'package:common_app_chat/pages/main/home_page.dart';
@@ -50,6 +50,7 @@ class MyApp extends StatelessWidget {
       theme: lightTheme,
       home: LoginPage(onTap: null)
       
+     
     );
   }
 }
