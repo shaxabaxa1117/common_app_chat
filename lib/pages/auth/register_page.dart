@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:common_app_chat/providers/auth_provider.dart';
+import 'package:common_app_chat/generated/l10n.dart';
 
 class RegisterPage extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
@@ -16,34 +17,33 @@ class RegisterPage extends StatelessWidget {
     final authProvider = Provider.of<AuthProvider>(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Регистрация')),
+      appBar: AppBar(title: Text(S.of(context).registerTitle)),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             TextField(
               controller: usernameController,
-              decoration: const InputDecoration(labelText: 'Имя/Никнейм'),
+              decoration:
+                  InputDecoration(labelText: S.of(context).usernameHint),
             ),
             TextField(
               controller: emailController,
-              decoration: const InputDecoration(labelText: 'Gmail'),
+              decoration: InputDecoration(labelText: S.of(context).gmailHint),
             ),
             TextField(
               controller: passwordController,
-              decoration: const InputDecoration(labelText: 'Пароль'),
+              decoration:
+                  InputDecoration(labelText: S.of(context).passwordHint),
               obscureText: true,
             ),
             TextField(
               controller: phoneController,
-              decoration: const InputDecoration(labelText: 'Номер телефона'),
+              decoration: InputDecoration(labelText: S.of(context).phoneHint),
             ),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
-                // Сохраняем текущий контекст
-
-
                 try {
                   await authProvider.register(
                     emailController.text,
@@ -54,31 +54,29 @@ class RegisterPage extends StatelessWidget {
                         : null,
                   );
 
-                  // Навигация в случае успеха
                   if (context.mounted) {
                     Navigator.pushReplacementNamed(context, '/home');
                   }
                 } catch (e) {
-                  // Показываем ошибку в сохранённом контексте
                   if (context.mounted) {
                     showDialog(
                       context: context,
                       builder: (context) => AlertDialog(
-                        title: const Text('Ошибка'),
+                        title: Text(S.of(context).errorTitle),
                         content: Text(e.toString()),
                       ),
                     );
                   }
                 }
               },
-              child: const Text('Зарегистрироваться'),
+              child: Text(S.of(context).registerButton),
             ),
             const SizedBox(height: 20),
             GestureDetector(
               onTap: onTap,
-              child: const Text(
-                'Войти',
-                style: TextStyle(fontWeight: FontWeight.bold),
+              child: Text(
+                S.of(context).alreadyHaveAccount,
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
           ],

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:common_app_chat/providers/auth_provider.dart';
+import 'package:common_app_chat/generated/l10n.dart';
 
 class LoginPage extends StatelessWidget {
   final TextEditingController _emailController = TextEditingController();
@@ -25,7 +26,7 @@ class LoginPage extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           Text(
-            'Welcome back, you\'ve been missed!',
+            S.of(context).welcomeMessage,
             style: TextStyle(
               color: Theme.of(context).colorScheme.primary,
               fontSize: 16,
@@ -34,12 +35,12 @@ class LoginPage extends StatelessWidget {
           const SizedBox(height: 15),
           TextField(
             controller: _emailController,
-            decoration: const InputDecoration(hintText: 'Email'),
+            decoration: InputDecoration(hintText: S.of(context).emailHint),
           ),
           const SizedBox(height: 10),
           TextField(
             controller: _passwordController,
-            decoration: const InputDecoration(hintText: 'Password'),
+            decoration: InputDecoration(hintText: S.of(context).passwordHint),
             obscureText: true,
           ),
           const SizedBox(height: 20),
@@ -55,20 +56,20 @@ class LoginPage extends StatelessWidget {
                 showDialog(
                   context: context,
                   builder: (context) => AlertDialog(
-                    title: const Text('Error'),
+                    title: Text(S.of(context).errorTitle),
                     content: Text(e.toString()),
                   ),
                 );
               }
             },
-            child: const Text('Login'),
+            child: Text(S.of(context).loginButton),
           ),
           const SizedBox(height: 20),
           GestureDetector(
             onTap: onTap,
-            child: const Text(
-              'Register now',
-              style: TextStyle(fontWeight: FontWeight.bold),
+            child: Text(
+              S.of(context).registerNow,
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ),
         ],

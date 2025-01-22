@@ -46,6 +46,6 @@ final darkTheme = ThemeData(
   ),
   colorScheme:const ColorScheme.dark(
     primary: Color(0xFFB0E3E6), // Основной цвет
-    secondary: Color(0xFF99FF99), // Акцентный цвет
+    secondary: Color.fromARGB(255, 78, 78, 78), // Акцентный цвет
   ),
 );

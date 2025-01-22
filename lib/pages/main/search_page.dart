@@ -1,7 +1,7 @@
 import 'package:common_app_chat/providers/search_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
+import 'package:common_app_chat/generated/l10n.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({Key? key}) : super(key: key);
@@ -17,7 +17,7 @@ class _SearchPageState extends State<SearchPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Поиск пользователей'),
+        title: Text(S.of(context).searchTitle),
       ),
       body: Column(
         children: [
@@ -28,9 +28,9 @@ class _SearchPageState extends State<SearchPage> {
                 Expanded(
                   child: TextField(
                     controller: searchProvider.searchController,
-                    decoration: const InputDecoration(
-                      hintText: 'Введите имя пользователя',
-                      border: OutlineInputBorder(),
+                    decoration: InputDecoration(
+                      hintText: S.of(context).searchHint,
+                      border: const OutlineInputBorder(),
                     ),
                   ),
                 ),
@@ -44,8 +44,8 @@ class _SearchPageState extends State<SearchPage> {
           if (searchProvider.isLoading)
             const Center(child: CircularProgressIndicator())
           else if (searchProvider.searchResults.isEmpty)
-            const Expanded(
-              child: Center(child: Text('Пользователи не найдены')),
+            Expanded(
+              child: Center(child: Text(S.of(context).searchNotFound)),
             )
           else
             Expanded(
