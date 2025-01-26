@@ -14,6 +14,8 @@ import 'package:common_app_chat/providers/friends_provider.dart';
 import 'package:common_app_chat/providers/locale_provider.dart';
 import 'package:common_app_chat/providers/search_provider.dart';
 import 'package:common_app_chat/providers/theme_provider.dart';
+import 'package:common_app_chat/services/auth_service.dart';
+import 'package:common_app_chat/services/fcm_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -22,6 +24,8 @@ import 'package:provider/provider.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  
+  await FcmService().init();
 
   runApp(
     MultiProvider(

@@ -15,7 +15,7 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text('CommonApp'),
+        title: const Text('CommonChat'),
         actions: [
           IconButton(
               onPressed: () {

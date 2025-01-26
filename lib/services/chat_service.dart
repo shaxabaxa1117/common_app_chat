@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class ChatService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -54,25 +55,53 @@ Stream<List<Map<String, dynamic>>> getChatMessages(String chatId) {
     String senderId,
     String content,
   ) async {
-    final senderDoc = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(senderId)
-        .get();
-
+    // Получаем имя отправителя
+    final senderDoc = await _firestore.collection('users').doc(senderId).get();
     final senderName = senderDoc.data()?['username'] ?? 'Unknown';
 
-    final message =  //! создаем message
-    {
+    // Сохраняем сообщение в Firestore
+    final message = {
       'senderId': senderId,
-      'senderName': senderName, 
+      'senderName': senderName,
       'content': content,
       'timestamp': FieldValue.serverTimestamp(),
     };
 
-    await FirebaseFirestore.instance
+    await _firestore
         .collection('chats')
         .doc(chatId)
         .collection('messages')
         .add(message);
+
+    // Получаем участников чата
+    final chatDoc = await _firestore.collection('chats').doc(chatId).get();
+    final participants = chatDoc.data()?['participants'] as List<dynamic>? ?? [];
+
+    // Отправляем уведомления другим участникам
+    for (final participantId in participants) {
+      if (participantId != senderId) {
+        await _sendNotification(participantId, senderName, content);
+      }
+    }
+  }
+
+  //! Отправка уведомления через FCM
+  Future<void> _sendNotification(
+      String receiverId, String senderName, String content) async {
+    //! Получаем токен FCM получателя
+    final userDoc = await _firestore.collection('users').doc(receiverId).get();
+    final fcmToken = userDoc.data()?['fcmToken'];
+
+    if (fcmToken != null) {
+      //! Формируем уведомление
+      await FirebaseMessaging.instance.sendMessage(
+        to: fcmToken,
+        data: {
+          'title': 'Новое сообщение',
+          'body': '$senderName: $content',
+        },
+      );
+    }
   }
 }
+
