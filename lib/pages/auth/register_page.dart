@@ -1,3 +1,4 @@
+import 'package:common_app_chat/providers/locale_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:common_app_chat/providers/auth_provider.dart';
@@ -15,9 +16,29 @@ class RegisterPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
-
+    final localeProvider = Provider.of<LocaleProvider>(context);
     return Scaffold(
-      appBar: AppBar(title: Text(S.of(context).registerTitle)),
+      appBar: AppBar(title: Text(S.of(context).registerTitle),
+      actions: [
+        DropdownButton<Locale>(
+              value: localeProvider.locale,
+              onChanged: (locale) {
+                if (locale != null) {
+                  localeProvider.setLocale(locale);
+                }
+              },
+              items: const [
+                DropdownMenuItem(
+                  value: Locale('en'),
+                  child: Text('English'),
+                ),
+                DropdownMenuItem(
+                  value: Locale('ru'),
+                  child: Text('Русский'),
+                ),
+              ],
+            ),
+      ],),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
